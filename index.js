@@ -12,69 +12,67 @@ const path      = require('path');
 //     const {data: buffer} = await axios.get(url, opts);
 //     console.log(buffer);
 //     //Chamar função dentro dela mesmo
+//TIRAR PRINT DO QR CODE
 // })();
 
 // return;
-// Login Function Logic
 (async function main() {
+
   try {
-    // Configures puppeteer
-    const browser = await puppeteer.launch({ headless: false });
+
+    //PUPPETEER CONFIG
+    const browser = await puppeteer.launch({ headless: false, userDataDir: "./user_data" });
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
     );
-
-    //Navigates to Whatsapp
+    
+    //GO TO ZAP
     await page.goto("https://web.whatsapp.com/");
 
-    // Entrar no ZAP
     // await page.waitForSelector("._1MXsz"); //BLACK
-    await page.waitForSelector("._1XkO3"); //WHITE
-    await page.waitForTimeout(5000);
+    await page.waitForSelector("._1XkO3");    //WHITE
+    // await page.waitForTimeout(5000);
 
-    //Buscar conversa no ZAP
-    const contactName = "+55 89 8819-1796";
-    await page.click(`span[title='${contactName}']`); //Na web, esse click nem rola visualmente
+    //SEARCH CONVERSATION IN ZAP
+    // const contact = "+55 89 8819-1796";
+    const contact = "PATO LÓGICO 🇧🇷 🇮🇱 🇺🇸 🇦🇴 🇰🇵 🇨🇳";
+    await page.click(`span[title='${contact}']`);
     await page.waitForSelector("._1fqrG");
 
-    //Barra de mensagem
-    const editor = await page.$("div[data-tab='6']");
-    await editor.focus();
-
-    //Amount of messages you want to send
-    const amountOfMessages = 5;
-
-    //Loops through cycle of sending message
-
-
-
-    for (var i = 0; i < amountOfMessages; i++) {
-      await page.evaluate(() => {
-        const message = "Are you mad at me? :( ";
-        document.execCommand("insertText", false, message); //APRENDER MAIS EVENTOS
-      });
-      await page.click("span[data-testid='send']");
-      await page.waitForTimeout(500);
-    }
-
-    //FILES
+    //FOCUS ON MENSAGE BAR
+    await page.focus("div[data-tab='6']"); 
     
-    //ABRE CLIPBOARD
-    const attachButton = await page.click('span[data-icon="clip"]')
-    await page.waitForTimeout(2000);    
-    //INPUT
+    await page.evaluate(() => {
+      const message = "@Paulo Isaac";
+      document.execCommand("insertText", false, message);
+    });
+
+    await page.waitForTimeout(1000);
+    console.log(await page.$("._3lPuS"));
+
+    return;
+    await page.click("span[data-testid='send']");
+    await page.waitForTimeout(500);
+
+    //OPEN CLIPBOARD
+    await page.click('span[data-icon="clip"]');
+    await page.waitForTimeout(1000);    
+
+    //INPUT FILE
     const inputFile = await page.$('input[accept="image/*,video/mp4,video/3gpp,video/quicktime"]');
     await inputFile.uploadFile( path.resolve(__dirname,"bom.jpg") )
     
+    //SEND FILE
+    await page.waitForTimeout(2000);
+    await page.click('span[data-testid="send"]');
     await page.waitForTimeout(3000);
-    await page.click('span[data-testid="send"]')
-    //APERTAR ENTER OU O BOTÃO // await this.page.keyboard.press("Enter");
 
-
+    await browser.close();
   } catch (e) {
-    console.error("error mine", e);
+    console.error("ERROR=>", e);
   }
+
 })();
 
 // (async function ok(){
