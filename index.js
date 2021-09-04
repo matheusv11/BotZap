@@ -9,7 +9,7 @@ const sendMessage = async(bom) => {
   try {
 
     //PUPPETEER CONFIG
-    const browser = await puppeteer.launch({ headless: false, userDataDir: "./user_data" });
+    const browser = await puppeteer.launch({ headless: true, userDataDir: "./user_data" }); //MUDAR PRA PRODUÇÄO
     const page = await browser.newPage();
     await page.setUserAgent(
       "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36"
